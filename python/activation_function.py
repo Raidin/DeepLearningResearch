@@ -105,7 +105,7 @@ def Sigmoid(x, prime=False):
         # Sigmoid = lambda x: 1 / (1 + np.exp(-x))
         return 1 / (1 + np.exp(-x))
 
-Activate('Sigmoid Func', Sigmoid)
+# Activate('Sigmoid Func', Sigmoid)
 
 # 수식을 Latex로 표기
 # eq = r'$\sigma(x)=\frac{1}{1+e^{-x}}$'
@@ -128,7 +128,7 @@ def HyperbolicTangent(x, prime=False):
         # return 2 / (1 + np.exp(-2 * x)) - 1
         return 2 * Sigmoid(2 * x) -1
 
-Activate('Tanh Fucntion', HyperbolicTangent)
+# Activate('Tanh Fucntion', HyperbolicTangent)
 
 # 수식을 Latex로 표기
 # eq = r'$\tanh (x)=\frac{2}{1+e^{-2 x}}-1$'
@@ -151,7 +151,7 @@ def Relu(x, prime=False):
     else:
         return np.maximum(x, 0)
 
-Activate('Relu Function', Relu)
+# Activate('Relu Function', Relu)
 
 # eq = r'$f(x)=\max (0, x)$'
 # EachFunctinGraph('relu', function, eq);
@@ -170,7 +170,7 @@ def LeakyRelu(x, prime=False):
     else:
         return np.maximum(x * 0.01, x)
 
-Activate('LeakyRelu Function', LeakyRelu)
+# Activate('LeakyRelu Function', LeakyRelu)
 
 # eq = r'$f(x)=\max (0.01 x, x)$'
 # EachFunctinGraph('LeakyRelu', function, eq);
@@ -189,7 +189,7 @@ def PRelu(x, prime=False):
     else:
         return np.maximum(x * alpha, x)
 
-Activate('PRelu Function', PRelu)
+# Activate('PRelu Function', PRelu)
 
 # eq = r'$f(x)=\max (\alpha x, x)$'
 # EachFunctinGraph('PRelu', activation, eq);
@@ -212,54 +212,58 @@ def ELU(x, prime=False):
         return np.where(x > 0, x, alpha * (np.exp(x) - 1))
         # return np.maximum(0, x) + np.minimum(0, alpha * (np.exp(x) - 1))
 
-Activate('ELU Function', ELU)
+# Activate('ELU Function', ELU)
 
 # eq = r'$f(x)=\max (0, x)+\min \left(0, \alpha *\left(e^{\frac{x}{\alpha}}-1\right)\right)$'
 # EachFunctinGraph('ELU', activation, eq);
 
-sigmoid_series = dict()
-x = np.linspace(-10, 10, 256, endpoint=True)
-sigmoid_series['sigmoid'] = Sigmoid(x)
-sigmoid_series['tanh'] = HyperbolicTangent(x)
+def main():
+    sigmoid_series = dict()
+    x = np.linspace(-10, 10, 256, endpoint=True)
+    sigmoid_series['sigmoid'] = Sigmoid(x)
+    sigmoid_series['tanh'] = HyperbolicTangent(x)
 
-'''
-Sigmoid Series Activation Function Visualization
-'''
-MergeFunctionDraw('Sigmoid Series', x, **sigmoid_series)
+    '''
+    Sigmoid Series Activation Function Visualization
+    '''
+    MergeFunctionDraw('Sigmoid Series', x, **sigmoid_series)
 
-relu_series = dict()
-x = np.linspace(-2, 2, 256, endpoint=True)
-relu_series['relu'] = Relu(x)
-relu_series['leaky_relu'] = LeakyRelu(x)
+    relu_series = dict()
+    x = np.linspace(-2, 2, 256, endpoint=True)
+    relu_series['relu'] = Relu(x)
+    relu_series['leaky_relu'] = LeakyRelu(x)
 
-x = np.linspace(-1, 1, 256, endpoint=True)
-relu_series['prelu'] = PRelu(x)
-relu_series['elu'] = ELU(x)
+    x = np.linspace(-1, 1, 256, endpoint=True)
+    relu_series['prelu'] = PRelu(x)
+    relu_series['elu'] = ELU(x)
 
-'''
-Relu Series Activation Function Visualization
-'''
-MergeFunctionDraw('Relu Series', x, **relu_series)
+    '''
+    Relu Series Activation Function Visualization
+    '''
+    MergeFunctionDraw('Relu Series', x, **relu_series)
 
-overall = dict()
-overall.update(sigmoid_series)
-overall.update(relu_series)
+    overall = dict()
+    overall.update(sigmoid_series)
+    overall.update(relu_series)
 
-'''
-Overall Activation Function Visualization
-'''
-MergeFunctionDraw('Overall Activation', x, **sigmoid_series)
+    '''
+    Overall Activation Function Visualization
+    '''
+    MergeFunctionDraw('Overall Activation', x, **sigmoid_series)
 
-overall_derivative = dict()
-x = np.linspace(-4, 4, 100, endpoint=True)
-overall_derivative['sigmoid'] = Sigmoid(x, True)
-overall_derivative['tanh'] = HyperbolicTangent(x, True)
-overall_derivative['relu'] = Relu(x, True)
-overall_derivative['leaky_relu'] = LeakyRelu(x, True)
-overall_derivative['prelu'] = PRelu(x, True)
-overall_derivative['elu'] = ELU(x, True)
+    overall_derivative = dict()
+    x = np.linspace(-4, 4, 100, endpoint=True)
+    overall_derivative['sigmoid'] = Sigmoid(x, True)
+    overall_derivative['tanh'] = HyperbolicTangent(x, True)
+    overall_derivative['relu'] = Relu(x, True)
+    overall_derivative['leaky_relu'] = LeakyRelu(x, True)
+    overall_derivative['prelu'] = PRelu(x, True)
+    overall_derivative['elu'] = ELU(x, True)
 
-'''
-Overall Activation Function Derivative Visualization
-'''
-MergeFunctionDraw('Overall Activation Derivative', x, **overall_derivative)
+    '''
+    Overall Activation Function Derivative Visualization
+    '''
+    MergeFunctionDraw('Overall Activation Derivative', x, **overall_derivative)
+
+if __name__ == '__main__':
+    main()
