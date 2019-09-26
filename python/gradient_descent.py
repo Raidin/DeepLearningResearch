@@ -35,24 +35,27 @@ def tangent_line(x):
     return lambda t: d * t + y
 
 fig = plt.figure(figsize=(10, 10))
+ax = plt.subplot(111)
 
-x = np.linspace(-4,4,100,True)
+x = np.linspace(-4, 4, 100,True)
 plt.plot(x, CubicFunc(x), label='function', linewidth='1.0', linestyle='-')
 
-# tf = tangent_line(-1.0)
-# plt.plot(x, tf(x), label='local minimum tangent_line', linewidth='1.0', linestyle='--')
-
-local_minimum, local_minimum_history = gradient_descent(-2.0)
-print('Minimum Value :', local_minimum)
-print('MiniMum History :', local_minimum_history)
+minimum, minimum_history = gradient_descent(-2.0)
+print('Minimum Value :', minimum)
+print('MiniMum History :', minimum_history)
 
 # local minimum 그래프 그릴때 해당 지점 점으로 표시해주는 거 넣기..
-for i, ele in enumerate(local_minimum_history) :
+for i, ele in enumerate(minimum_history[:10]) :
     tf = tangent_line(ele)
-    plt.plot(x, tf(x), label='{}-th local minimum({:.4f}) tangent line'.format(i, ele), linewidth='1.0', linestyle='--')
+    plt.plot(x, tf(x), label='{}-th minimum({:.4f}) tangent line'.format(i, ele), linewidth='1.0', linestyle='--')
 
-plt.legend(loc='upper left')
+# Label Box Position
+box = ax.get_position()
+ax.set_position([box.x0, box.y0, box.width * 0.7, box.height])
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
 plt.grid(alpha=.4,linestyle='--')
+plt.ylim(-15, 15)
 
 '''
 axis 가운데로 정렬
