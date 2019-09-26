@@ -56,7 +56,7 @@ def MergeFunctionDraw(titme, x, **kwarg):
 
     # plt.grid(True)
     plt.grid(alpha=.4,linestyle='--')
-    plt.title(titme)
+    plt.title(title)
     plt.legend(loc='upper left', fontsize='x-large')
 
     '''
