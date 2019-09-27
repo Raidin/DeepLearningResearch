@@ -3,6 +3,36 @@ import matplotlib.pyplot as plt
 import copy
 from activation_function import *
 
+class Weight:
+    def __init__(self, in_size=2, hidden_size=2, out_size=2, layer_size=2):
+        self.in_size = in_size
+        self.hidden_size = hidden_size
+        self.out_size = out_size
+        self.layer_size = layer_size
+        self.weights = []
+
+        np.random.seed(777)
+
+    def getWeights(self):
+        return self.weights
+
+    def Fixed(self):
+        self.weights.append(np.array([[0.1, 1.0], [0.1, 0.5]], dtype='float16'))
+        self.weights.append(np.array([[0.5], [0.1]], dtype='float16'))
+
+    def Uniform(self):
+        for i in range(self.layer_size):
+            self.weights.append(np.random.uniform(0, 1, (self.in_size, self.hidden_size)))
+            self.in_size = self.hidden_size
+            self.hidden_size = self.out_size if i+1 == self.layer_size-1 else self.hidden_size
+
+    def NormalDistribution(self):
+        weight_init_std = 0.1
+        for i in range(self.layer_size):
+            self.weights.append(weight_init_std * np.random.randn(self.in_size, self.hidden_size))
+            self.in_size = self.hidden_size
+            self.hidden_size = self.out_size if i+1 == self.layer_size-1 else self.hidden_size
+
 def MeanSquredError(y, t, prime=False):
     if prime:
         return y - t
@@ -51,7 +81,7 @@ def GradientDescent(weigths, grad, lr=0.5):
     for i, w in enumerate(weigths):
         w -= lr * grad[i]
 
-def Train(x, t, params, epoch=200, act_func=Sigmoid, is_visible_loss=False):
+def Train(x, t, params, epoch=100, act_func=Sigmoid, is_visible_loss=False):
     loss = []
 
     for i in range(epoch):
@@ -71,38 +101,24 @@ def Train(x, t, params, epoch=200, act_func=Sigmoid, is_visible_loss=False):
     print('\t[TARGET] ::', t)
     print('\t[OUTPUT] ::', out)
     print('\t[LOSS] ::', loss[-1])
+    # print('\t[Weight]\n\t', params)
     return loss
 
-def InitializeWeight(is_fixed=True, in_size=1, hidden_size=2, out_size=2, layer_size=2):
-    weights = []
-    weight_init_std = 0.1
-
-    if is_fixed:
-        weights.append(np.array([[0.15, 0.2]], dtype='float16'))
-        weights.append(np.array([[0.40, 0.50],[0.45, 0.55]], dtype='float16'))
-    else:
-        np.random.seed(777)
-        for i in range(layer_size):
-            weights.append(weight_init_std * np.random.randn(in_size, hidden_size))
-            in_size = hidden_size
-            hidden_size = out_size if i == layer_size-1 else hidden_size
-
-    return weights
-
 def main():
-    t = np.array([0.2, 0.7], dtype='float16')
-    x = np.array([[0.7]], dtype='float16')
-    print('- Input ::', x.shape)
-    weight_init = InitializeWeight(in_size=x.shape[1], out_size=t.ndim)
-    print('- Weight\n', weight_init)
+    t = np.array([1.0], dtype='float16')
+    x = np.array([[0.1, 0.9]], dtype='float16')
+    print('- Input ::', x)
 
-    return 0
+    w = Weight(in_size=x.shape[1], out_size=t.shape[0])
+    w.Fixed()
+    weight_init = w.getWeights()
+    print('- Weight\n', weight_init)
 
     loss_dict = dict()
     activation_func = [Sigmoid, HyperbolicTangent, Relu, LeakyRelu, ELU]
 
     # Activation Function을 다르게 적용 할지 유무 결정
-    is_apply_each_act = False
+    is_apply_each_act = True
 
     if is_apply_each_act:
         # Apply Each Activation Function
@@ -113,7 +129,7 @@ def main():
     else:
         act = Sigmoid
         print(' ============= USING {} ACTIVATION FUNCTION ============= '.format(act.__name__))
-        loss = Train(x, t, copy.deepcopy(weight_init), act_func=act)
+        loss = Train(x, t, copy.deepcopy(weight_init), act_func=act, is_visible_loss=False)
         loss_dict[act.__name__] = loss
 
     DrawLossPlot(**loss_dict)
