@@ -62,7 +62,6 @@ def DrawPlot(x, func, minimum, title, is_minimum_list=True):
     ax.spines['bottom'].set_position(('data',0))
     ax.yaxis.set_ticks_position('left')
     ax.spines['left'].set_position(('data',0))
-    plt.show()
 
 def main():
     x = np.linspace(-5, 5, 100,True)
@@ -96,6 +95,8 @@ def main():
     re_title = ''
     re_title += title + ' (start :: {}, step :: {}, lr :: {})'.format(-3.0, 4, 0.01)
     DrawPlot(x, CubicFunc, minimum_history, re_title)
+
+    plt.show()
 
 if __name__ == '__main__':
     main()
