@@ -11,9 +11,9 @@ from matplotlib import cm
 
 def formula(x, y, prime=False):
     if prime:
-        return np.array([x / 10.0, 2.0*y])
+        return np.array([x / 5.0, 2.0*y])
     else:
-        return x**2 / 20.0 + y**2
+        return x**2 / 10.0 + y**2
 
 def DrwaPlot(func, params, x, y):
     fig = plt.figure(figsize=(12, 12))
@@ -25,7 +25,7 @@ def DrwaPlot(func, params, x, y):
 
     ax.scatter(0, 0, func(0, 0), label='Minimum', alpha=1.0, s=10, color="blue")
     surf= ax.plot_surface(x, y, func(x, y), alpha=0.5, rstride=5, cstride=5,cmap=cm.binary, antialiased=True)
-    ax.set_title(r'$f(x)=\frac{1}{20} x^{2}+y^{2}$')
+    ax.set_title(r'$f(x)=\frac{1}{10} x^{2}+y^{2}$')
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
@@ -36,43 +36,55 @@ def DrwaPlot(func, params, x, y):
 
     plt.show()
 
-def GradientDescent(x, grad, factor=np.zeros((2, 1), dtype='float64'), lr=0.01):
-    return x - (lr * grad), factor
+def GradientDescent(param, grad, cache=np.zeros((2, 1), dtype='float64'), lr=0.01):
+    param -= lr * grad
 
-def Momentum(x, grad, factor=np.zeros((2, 1), dtype='float64'), lr=0.01, m=0.9):
-    factor = (m * factor) - (lr * grad);
-    x = x + factor
-    return x, factor
+    return param, cache
 
-def AdaGrad(x, grad, factor=np.zeros((2, 1), dtype='float64'), lr=0.01):
-    factor = factor + (grad * grad)
-    x = x - (lr * grad) / (np.sqrt(factor) + 1e-7)
-    return x, factor
+def Momentum(param, grad, cache=np.zeros((2, 1), dtype='float64'), lr=0.01, m=0.9):
+    cache = (m * cache) - (lr * grad);
+    param += cache
 
-def SearchParam(func, init_param=np.array([[-7.0], [2.0]]), step=20, lr=0.1):
+    return param, cache
+
+def AdaGrad(param, grad, cache=np.zeros((2, 1), dtype='float64'), lr=0.01):
+    cache += pow(grad, 2)
+    param += - (lr * grad) / (np.sqrt(cache) + 1e-8)
+
+    return param, cache
+
+
+def Adam(param, grad, cache=np.zeros((2, 1), dtype='float64'), lr=0.01, beta1=0.9, beta2=0.999):
+    m = beta1 * m + (1-beta1) * param
+    v = beta2 * v + (1-beta2) * (pow(param,2))
+    param += -lr * m / (np.sqrt(v) + 1e-8)
+
+    return param, cache
+
+
+def SearchParam(func, init_param=np.array([[-3.0], [2.0]]), step=20, lr=0.1):
     # search minimum value using Gradient Descent
-    minimum = init_minimum
-    minimum_history = init_minimum
-
-    factor = np.zeros((2,1), dtype='float64')
+    params = init_param
+    params_history = init_param
+    cache = np.zeros((2, 1), dtype='float64')
     for i in range(step):
-        grad = formula(minimum[0], minimum[1], True)
-        minimum, factor = func(minimum, grad, factor=factor, lr=lr)
-        minimum_history = np.hstack((minimum_history, minimum))
+        grad = formula(params[0].copy(), params[1].copy(), True)
+        params, cache = func(params.copy(), grad.copy(), cache=cache, lr=lr)
+        params_history = np.hstack((params_history, params))
 
-    return minimum_history
+    return params_history
 
-x = np.linspace(-7,7,100,True)
-y = np.linspace(-3,3,100,True)
+x = np.linspace(-3.0, 3.0, 100,True)
+y = np.linspace(-3.0, 3.0, 100,True)
 
 # create "base grid"
 x, y = np.meshgrid(x, y)
 
-params = dict()
+optimizer = dict()
 
-params['SGD'] = SearchParam(GradientDescent, lr=0.95)
-params['Momentum'] = SearchParam(Momentum, lr=0.1)
-params['AdaGrad'] = SearchParam(AdaGrad, lr=1.5)
+optimizer['GD'] = SearchParam(GradientDescent, lr=0.8)
+optimizer['Momentum'] = SearchParam(Momentum, lr=0.1)
+optimizer['AdaGrad'] = SearchParam(AdaGrad, lr=1.0)
+# optimizer['Adam'] = SearchParam(Adam, lr=1.0)
 
-DrwaPlot(formula, params, x, y)
-
+DrwaPlot(formula, optimizer, x, y)
