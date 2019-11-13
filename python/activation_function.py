@@ -48,7 +48,7 @@ def EachFunctinDraw(*args) :
 
     plt.show()
 
-def MergeFunctionDraw(titme, x, **kwarg):
+def MergeFunctionDraw(title, x, **kwarg):
     plt.figure(figsize=(10, 10))
 
     for key, value in kwarg.items():
