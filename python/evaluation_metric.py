@@ -43,7 +43,7 @@ class Evaluation():
         is_auto_show = False
         if ax is None:
             fig, ax = plt.subplots(1)
-            fig.canvas.set_window_title('dd')
+            fig.canvas.set_window_title('Precision & Recall Graph')
             is_auto_show= True
 
         ax.plot(self._rec, self._prec, linewidth='1.0', linestyle="-")
@@ -52,7 +52,7 @@ class Evaluation():
         ax.set_ylim(0, 1.1)
         ax.set_xlabel("Recall")
         ax.set_ylabel("Precision")
-        ax.set_title('Precision & Recall Graph')
+        ax.set_title(title)
 
         if is_auto_show:
             plt.show()
@@ -73,10 +73,22 @@ if __name__ == '__main__':
     evaluation.ComputePrecisionAndRecall()
 
     print(' - Precision\n', evaluation.GetPrecision())
-    print('- Recall\n', evaluation.GetPrecision())
+    print('- Recall\n', evaluation.GetRecall())
 
-    fig, ax = plt.subplots(1, 3, figsize=(10,5))
-    fig.canvas.set_window_title('Precision & Recall Graph')
-    evaluation.VisualizePlot(ax=ax[0])
+    interval = np.arange(0, 1.1, 0.1)
+    r = []
+    tmp = np.stack([evaluation.GetPrecision(), evaluation.GetRecall()], axis=1)
+    # print(tmp[:,0][np.where(tmp[:, 1] > 0.1)])
+    for i in interval:
+        a = np.where(tmp[:, 1] >= i, tmp[:,0], 0)
+        r.append(np.max(a))
+    print(r)
 
+    rnp = np.array(r)
+    plt.plot(interval, r)
     plt.show()
+    # fig, ax = plt.subplots(1, 3, figsize=(10,5))
+    # fig.canvas.set_window_title('Precision & Recall Graph')
+    # evaluation.VisualizePlot()
+
+    # plt.show()
