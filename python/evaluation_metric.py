@@ -23,9 +23,13 @@ class Evaluation():
     def GetRecall(self):
         return self._rec
 
+    def GetAP(self):
+        return self._AP
+
     def CreateSampleResult(self):
-        data_path = os.path.join(ROOT_DIR, 'files/evaluation_metric_sample_1.csv')
+        data_path = os.path.join(ROOT_DIR, 'files/evaluation_metric_sample_3.csv')
         data = pd.read_csv(data_path)
+        print(pd.DataFrame(data))
 
         '''
         * Num of object
@@ -53,7 +57,7 @@ class Evaluation():
             self._prec.append(acc_tp / (acc_tp + acc_fp))
             self._rec.append(acc_tp / self.num_of_object)
 
-    def VisualizePlot(self, mode='default', title='default', ax=None):
+    def VisualizePlot(self, mode='default', title='Standard', ax=None):
 
         is_auto_show = False
         if ax is None:
@@ -85,9 +89,6 @@ class Evaluation():
         if is_auto_show:
             plt.show()
 
-    def ComputAveragePrecision(self):
-        print('compute Averate Precision')
-
     def ComputeElevenPointInterpolation(self):
         self._eleven_rec = np.arange(0, 1.1, 0.1)
         group = np.stack([evaluation.GetPrecision(), evaluation.GetRecall()], axis=1)
@@ -107,10 +108,10 @@ class Evaluation():
 
         # Compute AP
         self._every_rec = np.insert(self._every_rec, 0, 0.0)
-        self._every_prec = np.insert(self._every_prec, 0, self._every_prec[0])
         self._AP = 0
         for i in range(1, len(self._every_rec)):
             self._AP += (self._every_rec[i] - self._every_rec[i-1]) * self._every_prec[i-1]
+        self._every_rec = np.delete(self._every_rec, 0)
         # Area under curve(AUC)
         print('every-point interpolation AP :: {:0.2f}%'.format(self._AP * 100))
 
@@ -134,11 +135,13 @@ if __name__ == '__main__':
     # Compute 11-point interpolation
     evaluation.ComputeElevenPointInterpolation()
     # Display 11-point interpolation precision and recall graph
-    evaluation.VisualizePlot(ax=ax[1], mode='eleven', title='11-point interpolation')
+    title = '11-point interpolation(AP::{:0.2f}%)'.format(evaluation.GetAP() * 100)
+    evaluation.VisualizePlot(ax=ax[1], mode='eleven', title=title)
 
     # Compute every-point interpolation
     evaluation.ComputeEveryPointInterpolation()
-    evaluation.VisualizePlot(ax=ax[2], mode='every', title='Every-point interpolation')
+    title = 'Every-point interpolation(AP::{:0.2f}%)'.format(evaluation.GetAP() * 100)
+    evaluation.VisualizePlot(ax=ax[2], mode='every', title=title)
 
     plt.tight_layout()
     plt.show()
