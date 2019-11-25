@@ -1,2 +1,3 @@
+fine . -type l
 *.pyc
 .ipynb_checkpoints
