@@ -2,3 +2,4 @@ data/
 *.pyc
 .ipynb_checkpoints
 *.npz
+*.h5
