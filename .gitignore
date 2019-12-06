@@ -1,4 +1,5 @@
 data/
+secret/
 *.pyc
 .ipynb_checkpoints
 *.npz
