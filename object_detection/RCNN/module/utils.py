@@ -83,8 +83,9 @@ def SeparateToRegions(gt_bbox, rois, th=0.5):
     regions = np.vstack([regions, np.insert(pos_candidate[:], 4, 1, axis=1)])
 
     # ADD Negative Regions
-    if rois_copy.shape[0] > 96:
-        neg_idx = random.sample(range(rois_copy.shape[0]), 96)
+    neg_num = pos_candidate.shape[0] * 3
+    if rois_copy.shape[0] > neg_num:
+        neg_idx = random.sample(range(rois_copy.shape[0]), neg_num)
         rois_copy = rois_copy[neg_idx]
     regions = np.vstack([regions, np.insert(rois_copy[:], 4, 0, axis=1)])
 
