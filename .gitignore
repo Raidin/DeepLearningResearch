@@ -1,3 +1,7 @@
-fine . -type l
+data/
+secret/
 *.pyc
 .ipynb_checkpoints
+*.npz
+*.npy
+*.h5
