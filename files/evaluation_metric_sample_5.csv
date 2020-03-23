@@ -1,0 +1,7 @@
+Image,index,confidence,measure
+1,4,0.9887,FP
+1,3,0.826,TP
+1,1,0.7677,FP
+1,2,0.7368,FP
+1,5,0.6563,FP
+1,6,0.5269,FP
